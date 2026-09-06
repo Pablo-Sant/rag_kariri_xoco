@@ -12,7 +12,7 @@ import os
 
 def build_index():
    
-   
+   # Para emojis, o leitor de PDF usa o High surrogate e o low surrogate para representá-lo em bits, mas para um determinado caractere apenas um dos surrogates estava sendo representado, ent instrui o Python a ignora
    def clean_surrogates(text: str) -> str:
       
       return text.encode('utf-8', 'ignore').decode('utf-8')
