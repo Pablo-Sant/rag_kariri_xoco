@@ -6,18 +6,23 @@ from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 from llama_index.core import StorageContext, VectorStoreIndex
 from llama_index.vector_stores.pinecone import PineconeVectorStore
 from core.database import create_index
-from core.chat_engine import get_chat_engine
 from core.add_summary import add_summary
 import os
 
 
 def build_index():
+   
+   
+   def clean_surrogates(text: str) -> str:
+      
+      return text.encode('utf-8', 'ignore').decode('utf-8')
+      
     
    Settings.embed_model = HuggingFaceEmbedding(model_name='intfloat/multilingual-e5-small')
 
    
    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-   pdf_path = os.path.join(BASE_DIR, 'files', 'Tese_Suzart _ Lingua_Kariri_Xoco_178_197.pdf')
+   pdf_path = os.path.join(BASE_DIR, 'files', 'Tese_Suzart_Língua_Kariri_Xoco-178-307.pdf')
 
 
    
@@ -25,6 +30,11 @@ def build_index():
    documents = SimpleDirectoryReader(input_files=[pdf_path], file_extractor={".pdf": PDFReader()}).load_data()
    
    documents.append(add_summary())
+   
+   for doc in documents:
+      cleaned = clean_surrogates(doc.text)
+      doc.set_content(cleaned)
+   
    print("Documentos carregados com sucesso")
    
 
@@ -32,7 +42,7 @@ def build_index():
    
    # Dividindo em chunks
    node_parser = SentenceSplitter(chunk_size=1000, chunk_overlap=200) # Cada chunk pode ter no máximo 1000 tokens 
-   nodes = node_parser.get_nodes_from_documents(documents)
+   nodes = node_parser.get_nodes_from_documents(documents, show_progress=True)
    print("Chunks criados com sucesso")
 
    
@@ -41,7 +51,7 @@ def build_index():
    pc = create_index()
    
    pinecone_index = pc.Index("kariri-xoco")
-   print("Index criado e pego com sucesso")
+   print("Index criado com sucesso")
 
    
    
