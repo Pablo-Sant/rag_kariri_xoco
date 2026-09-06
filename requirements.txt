@@ -1,0 +1,12 @@
+llama-index-core==0.14.18
+llama-index-embeddings-huggingface==0.6.1
+sentence-transformers==5.2.3
+transformers==4.57.6
+torch==2.10.0
+llama-index-vector-stores-pinecone
+streamlit
+google-genai    
+python-dotenv
+llama_index.llms.google_genai
+llama-index-readers-file
+llama-index-llms-groq
